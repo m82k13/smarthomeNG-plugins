@@ -424,7 +424,11 @@ class OneWire(SmartPlugin):
                         else:
                             value = 0
                     elif key == 'VOC':
-                        value = value * 310 + 450
+                        co2_offset = self._sensors[addr][key].get('co2_offset', 0)
+                        if co2_offset > 0:
+                            value = (float(value) - 0.02) * 2700 * co2_offset
+                        else:
+                            value = value * 310 + 450
 
                     if self._sensors[addr][key].get('readerrors', 0) >= self.warn_after:
                         self.logger.notice(f"_sensor_cycle: Success reading {addr}-{key}, up to now there were {self._sensors[addr][key]['readerrors']} consecutive problems")
@@ -638,6 +642,17 @@ class OneWire(SmartPlugin):
         key = self.get_iattr_value(item.conf,'ow_sensor')
         config_data['sensor_addr'] = addr
         config_data['sensor_key'] = key
+
+        if key == 'VOC' and self.has_iattr(item.conf, 'co2_offset'):
+            try:
+                co2_offset = float(self.get_iattr_value(item.conf, 'co2_offset'))
+                if co2_offset > 0.0:
+                    config_data['co2_offset'] = co2_offset
+                else:
+                    self.logger.error(f"parse_item: CO2 offset for {item.id()} must be a positive number, but is currently set to {co2_offset}")
+            except Exception as e:
+                self.logger.error(f"parse_item: No usable CO2 offset for {item.id()} configured: {e}")
+
         self.logger.debug(f"parse_item: ow_sensor '{key}' with ow_addr '{addr}' for item '{item.id()}' defined")
 
         # check the compliance with regular sensor address definitions
@@ -693,6 +708,8 @@ class OneWire(SmartPlugin):
             item._ow_path = table[addr][key]
             self.add_item(item, mapping=addr+'-'+key, config_data_dict=config_data)
             return self.update_item
+        if key == 'VOC' and 'co2_offset' in config_data:
+            table[addr][key]['co2_offset'] = config_data['co2_offset']
 
         self.add_item(item, mapping=addr+'-'+key, config_data_dict=config_data)
         return

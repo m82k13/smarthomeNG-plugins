@@ -316,7 +316,7 @@ class OwBase(object):
             except Exception:
                 vis = 0
             if vis > 0:
-                keys = {'T': 'temperature', 'H': 'HIH4000/humidity', 'L': 'vis'}
+                keys = {'T': 'temperature', 'H': 'HIH4000/humidity', 'L': 'vis', 'VOC': 'vis'}
             else:
                 keys = {'T': 'temperature', 'H': 'HIH4000/humidity'}
             # check if a voltage from 1-wire bus can be measured
@@ -349,7 +349,7 @@ class OwBase(object):
                 keys['H'] = 'humidity'
                 return keys, typ
             else:
-                self.logger.warning(f"1-Wire: unknown sensor {addr} {typ} page3: {page3}")
+                self.logger.info(f"1-Wire: unknown sensor {addr} {typ} page3: {page3}")
                 keys.update({'V': 'VAD', 'VDD': 'VDD'})
                 return keys, typ
         elif typ == 'DS2401':           # iButton

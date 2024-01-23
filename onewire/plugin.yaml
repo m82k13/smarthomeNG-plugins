@@ -265,6 +265,12 @@ item_attributes:
             en: 'Sensor type. See plugin docu for supported types'
             fr: 'Type du capteur. Voir dans documente du plugin pour formats supportés'
 
+    co2_offset:
+        type: num
+        description:
+            de: Offset für die älteren Modelle von Luftgütesensoren der Firma eservice-online (jetzt esera)
+            en: Offset for deprecated models of air quality sensors of company eservice-online (now esera)
+
 item_structs: NONE
   # Definition of item-structure templates for this plugin
 
