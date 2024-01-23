@@ -353,7 +353,7 @@ class OwBase(object):
                 keys.update({'V': 'VAD', 'VDD': 'VDD'})
                 return keys, typ
         elif typ == 'DS2401':           # iButton
-            return {'B': 'iButton'}, typ
+            return {'B': 'iButton', 'BM': 'Busmaster'}, typ
         elif typ in ['DS2413', 'DS2406']:  # I/O
             return {'IA': 'sensed.A', 'IB': 'sensed.B', 'OA': 'PIO.A', 'OB': 'PIO.B'}, typ
         elif typ == 'DS1420':           # Busmaster
